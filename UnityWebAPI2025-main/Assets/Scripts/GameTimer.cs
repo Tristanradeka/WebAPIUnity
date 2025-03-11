@@ -1,11 +1,12 @@
 using UnityEngine;
 using Mirror;
 using System;
+using Telepathy;
 
 public class GameTimer : NetworkBehaviour
 {
     [SyncVar] public float timeRemaining = 60.0f;
-   
+
 
     // Update is called once per frame
     void Update()
@@ -24,33 +25,15 @@ public class GameTimer : NetworkBehaviour
     [Server]
     private void EndGame()
     {
-        int frozenCount = 0;
-
-        PlayerTag[] players = FindObjectsByType<PlayerTag>(FindObjectsSortMode.None);
-
-        foreach (var player in players)
-        {
-            if (player.isFrozen)
-            {
-                frozenCount++;
-            }
-        }
-
-        if (frozenCount == players.Length - 1)
-        {
-            //'It' Player wins
-            RPCShowWin(true);
-        }
-        else
-        {
-            //Survivors win
-            RPCShowWin(false);
-        }
+        Time.timeScale = 0;
+        RPCShowWin();
     }
 
     [ClientRpc]
-    void RPCShowWin(bool itWins)
+    void RPCShowWin()
     {
-        Debug.Log( itWins? "It wins":"Survivors win");
+        //Debug.Log( itWins? "It wins":"Survivors win");
+        DisplayTimerForPlayer localPlayer = FindFirstObjectByType<DisplayTimerForPlayer>();
+        localPlayer.DisplayMenu();
     }
 }

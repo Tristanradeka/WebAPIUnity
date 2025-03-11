@@ -7,18 +7,23 @@ using UnityEngine.Networking;
 using TMPro;
 using System.Text;
 using System;
+using UnityEngine.UI;
 
 public class FetchData : MonoBehaviour
 {
     string serverUrl = "http://localhost:3000/player";
     string serverUrl2 = "http://localhost:3000/deletePlayer";
+    string serverUrl3 = "http://localhost:3000/topTen";
 
     List<PlayerData> playerList;
     PlayerData player;
     public GameObject playerData;
     public GameObject showAllMenu;
-
+    public GameObject top10Menu;
+     
     public GameObject deleteSuccess;
+
+    public TMP_Text[] topTenTextObjs;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -73,7 +78,7 @@ public class FetchData : MonoBehaviour
                     tmpText.enableAutoSizing = true;
 
                     // Assign player data to the text
-                    tmpText.text = $"{player.screenName} {player.firstName} {player.lastName} {player.dateStarted} {player.score}";
+                    tmpText.text = $"{player.screenName} {player.firstName} {player.lastName} {player.numberOfGamesPlayed} {player.score}";
                 }
             }
             else
@@ -82,6 +87,50 @@ public class FetchData : MonoBehaviour
             }
         }
     }
+
+    public IEnumerator GetTopTen()
+    {
+        using (UnityWebRequest request = UnityWebRequest.Get(serverUrl3))
+        {
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.Success)
+            {
+                string json = request.downloadHandler.text;
+                Debug.Log($"Received JSON: {json}");
+
+                playerList = JsonConvert.DeserializeObject<List<PlayerData>>(json);
+
+                if (playerList == null || playerList.Count == 0)
+                {
+                    Debug.LogError("No players received.");
+                    yield break;
+                }
+
+                Debug.Log($"Displaying {playerList.Count} players");
+
+                int ctr = 0;
+                // Display top players
+                foreach (var player in playerList)
+                {
+                    Debug.Log($"Displaying: {player.screenName} - {player.score}");
+
+                    topTenTextObjs[ctr].text += $"{player.screenName} - {player.score}";
+
+                    ctr++;
+                }
+
+
+                //// Force UI update to refresh layout
+                //LayoutRebuilder.ForceRebuildLayoutImmediate(top10Menu.GetComponent<RectTransform>());
+            }
+            else
+            {
+                Debug.LogError($"Error fetching top 10 players: {request.error}");
+            }
+        }
+    }
+
 
     public IEnumerator GetDataByID(string json, string playerid = "")
     {
@@ -151,6 +200,11 @@ public class FetchData : MonoBehaviour
         StartCoroutine(GetData());
     }
 
+    public void StartFetch2()
+    {
+        StartCoroutine(GetTopTen());
+    }
+
     public void SetupPlayerSearchData(string screenName, string playerid)
     {
         player = new PlayerData();
@@ -209,7 +263,7 @@ public class FetchData : MonoBehaviour
             data[0] = playerData.screenName;
             data[1] = playerData.firstName;
             data[2] = playerData.lastName;
-            data[3] = playerData.dateStarted;
+            data[3] = playerData.numberOfGamesPlayed;
             data[4] = playerData.score;
 
             return data;
@@ -227,7 +281,6 @@ public class PlayerData
     public string screenName;
     public string firstName;
     public string lastName;
-    public string dateStarted;
+    public string numberOfGamesPlayed;
     public string score;
-
 }

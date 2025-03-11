@@ -23,14 +23,14 @@ public class PostData : MonoBehaviour
         
     }
 
-    public void SetupPlayerData(string screenName, string firstName, string lastName, string dateStarted, string score)
+    public void SetupPlayerData(string screenName, string firstName, string lastName, string numberOfGamesPlayed, string score)
     {
         player = new PlayerData();
 
         player.screenName = screenName;
         player.firstName = firstName;
         player.lastName = lastName;
-        player.dateStarted = dateStarted;
+        player.numberOfGamesPlayed = numberOfGamesPlayed;
         player.score = score;
         
 
@@ -40,14 +40,14 @@ public class PostData : MonoBehaviour
 
     }
 
-    public void SetupPlayerDataUpdate(string screenName, string firstName, string lastName, string dateStarted, string score)
+    public void SetupPlayerDataUpdate(string screenName, string firstName, string lastName, string numberOfGamesPlayed, string score)
     {
         player = new PlayerData();
 
         player.screenName = screenName;
         player.firstName = firstName;
         player.lastName = lastName;
-        player.dateStarted = dateStarted;
+        player.numberOfGamesPlayed = numberOfGamesPlayed;
         player.score = score;
 
 
@@ -56,6 +56,24 @@ public class PostData : MonoBehaviour
         StartCoroutine(PostPlayerDataUpdate(json));
 
     }
+
+    public void SetupPlayerDataEndGame(string screenName, string firstName, string lastName, string numberOfGamesPlayed, string score)
+    {
+        player = new PlayerData();
+
+        player.screenName = screenName;
+        player.firstName = firstName;
+        player.lastName = lastName;
+        player.numberOfGamesPlayed = numberOfGamesPlayed;
+        player.score = score;
+
+
+        string json = JsonUtility.ToJson(player);
+        Debug.Log(json);
+        StartCoroutine(PostPlayerData(json));
+    }
+
+
 
 
 

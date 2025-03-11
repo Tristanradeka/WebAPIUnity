@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e35ee8278086e654b8dc7e90838f5af3
+timeCreated: 1488920195
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 18118
+  packageName: Elven Long Bow (Fully Animated)
+  packageVersion: 1.6
+  assetPath: Assets/Elven Long Bow (fully animated)/Controller.controller
+  uploadId: 177872
